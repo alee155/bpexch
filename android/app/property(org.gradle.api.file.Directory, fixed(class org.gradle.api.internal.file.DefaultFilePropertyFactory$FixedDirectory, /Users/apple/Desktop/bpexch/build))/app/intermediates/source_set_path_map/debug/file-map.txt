@@ -1,0 +1,45 @@
+com.bpexch.app-core-runtime-2.2.0-0 /Users/apple/.gradle/caches/transforms-3/064c0074a35ff625f76d691a5479482b/transformed/core-runtime-2.2.0/res
+com.bpexch.app-jetified-datastore-1.0.0-1 /Users/apple/.gradle/caches/transforms-3/0a7162340a8b7a143cf9fc76973f5f43/transformed/jetified-datastore-1.0.0/res
+com.bpexch.app-jetified-emoji2-views-helper-1.2.0-2 /Users/apple/.gradle/caches/transforms-3/0d8ad3b416ec22b64cd02ca5f70277c2/transformed/jetified-emoji2-views-helper-1.2.0/res
+com.bpexch.app-lifecycle-livedata-2.7.0-3 /Users/apple/.gradle/caches/transforms-3/160fc60bc4730594837f51ba25fa1edc/transformed/lifecycle-livedata-2.7.0/res
+com.bpexch.app-jetified-savedstate-1.2.1-4 /Users/apple/.gradle/caches/transforms-3/1dde4a0d9e07d0ffcdbe8146da33950b/transformed/jetified-savedstate-1.2.1/res
+com.bpexch.app-fragment-1.7.1-5 /Users/apple/.gradle/caches/transforms-3/2a733b671bc50a6cb6ef2e3330618ed0/transformed/fragment-1.7.1/res
+com.bpexch.app-jetified-appcompat-resources-1.6.1-6 /Users/apple/.gradle/caches/transforms-3/31a85baecb4443fcf15949a74e6206ce/transformed/jetified-appcompat-resources-1.6.1/res
+com.bpexch.app-jetified-lifecycle-process-2.7.0-7 /Users/apple/.gradle/caches/transforms-3/3c621caa18c8ccecc5021336123683df/transformed/jetified-lifecycle-process-2.7.0/res
+com.bpexch.app-jetified-activity-1.9.2-8 /Users/apple/.gradle/caches/transforms-3/3d82ada685caa6acba7fc0d8ac564ecb/transformed/jetified-activity-1.9.2/res
+com.bpexch.app-jetified-window-java-1.2.0-9 /Users/apple/.gradle/caches/transforms-3/3f16abeaff62509758856bdd64573794/transformed/jetified-window-java-1.2.0/res
+com.bpexch.app-jetified-core-1.0.0-10 /Users/apple/.gradle/caches/transforms-3/49897c3ff85e886c7aa46f6026d25e10/transformed/jetified-core-1.0.0/res
+com.bpexch.app-jetified-tracing-1.2.0-11 /Users/apple/.gradle/caches/transforms-3/4e28f922ecf168223be81433c333dceb/transformed/jetified-tracing-1.2.0/res
+com.bpexch.app-lifecycle-runtime-2.7.0-12 /Users/apple/.gradle/caches/transforms-3/599776dad79d4f835fbae043897df7ae/transformed/lifecycle-runtime-2.7.0/res
+com.bpexch.app-jetified-annotation-experimental-1.4.0-13 /Users/apple/.gradle/caches/transforms-3/5ea2320e20ad0ea8865655728299d63f/transformed/jetified-annotation-experimental-1.4.0/res
+com.bpexch.app-jetified-startup-runtime-1.1.1-14 /Users/apple/.gradle/caches/transforms-3/6e295e04010e7fd728192deba0e1c566/transformed/jetified-startup-runtime-1.1.1/res
+com.bpexch.app-jetified-core-ktx-1.13.1-15 /Users/apple/.gradle/caches/transforms-3/72d04bd726bb6eb5b964aba23e626be5/transformed/jetified-core-ktx-1.13.1/res
+com.bpexch.app-appcompat-1.6.1-16 /Users/apple/.gradle/caches/transforms-3/7a46949aa291e38abd28b8beecf82e57/transformed/appcompat-1.6.1/res
+com.bpexch.app-webkit-1.12.0-17 /Users/apple/.gradle/caches/transforms-3/85754d85511f2f89d2bbdfd5e8b08acd/transformed/webkit-1.12.0/res
+com.bpexch.app-jetified-datastore-preferences-1.0.0-18 /Users/apple/.gradle/caches/transforms-3/a2569e952aa46cd39d7325cca4ba240e/transformed/jetified-datastore-preferences-1.0.0/res
+com.bpexch.app-swiperefreshlayout-1.1.0-19 /Users/apple/.gradle/caches/transforms-3/a3a01e304cd34579f757fa5ff37b290f/transformed/swiperefreshlayout-1.1.0/res
+com.bpexch.app-lifecycle-viewmodel-2.7.0-20 /Users/apple/.gradle/caches/transforms-3/a66125c86f833d05a5a839352435123c/transformed/lifecycle-viewmodel-2.7.0/res
+com.bpexch.app-jetified-lifecycle-viewmodel-savedstate-2.7.0-21 /Users/apple/.gradle/caches/transforms-3/a6aa034d937573279983f92455b16809/transformed/jetified-lifecycle-viewmodel-savedstate-2.7.0/res
+com.bpexch.app-lifecycle-livedata-core-2.7.0-22 /Users/apple/.gradle/caches/transforms-3/a81e4bf5e0b3856aa51df3cbeb773c70/transformed/lifecycle-livedata-core-2.7.0/res
+com.bpexch.app-jetified-profileinstaller-1.3.1-23 /Users/apple/.gradle/caches/transforms-3/bd3d36e80db9d9bec6d619243d1c059c/transformed/jetified-profileinstaller-1.3.1/res
+com.bpexch.app-jetified-window-1.2.0-24 /Users/apple/.gradle/caches/transforms-3/da7973acd53796e02d4144032df377a6/transformed/jetified-window-1.2.0/res
+com.bpexch.app-browser-1.8.0-25 /Users/apple/.gradle/caches/transforms-3/dab048ca7dee92c657cf65d4be1f072a/transformed/browser-1.8.0/res
+com.bpexch.app-jetified-lifecycle-livedata-core-ktx-2.7.0-26 /Users/apple/.gradle/caches/transforms-3/df0b5fe0f2556c5eb764fc90d0de82ba/transformed/jetified-lifecycle-livedata-core-ktx-2.7.0/res
+com.bpexch.app-core-1.13.1-27 /Users/apple/.gradle/caches/transforms-3/ee556a62bb045bf553b38b5a8873b9ef/transformed/core-1.13.1/res
+com.bpexch.app-jetified-emoji2-1.2.0-28 /Users/apple/.gradle/caches/transforms-3/fef82e116ca4920d4081f7e8a1068c02/transformed/jetified-emoji2-1.2.0/res
+com.bpexch.app-packaged_res-29 /Users/apple/.pub-cache/hosted/pub.dev/file_picker-8.1.4/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/file_picker/intermediates/packaged_res/debug
+com.bpexch.app-packaged_res-30 /Users/apple/.pub-cache/hosted/pub.dev/flutter_inappwebview_android-1.1.3/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/flutter_inappwebview_android/intermediates/packaged_res/debug
+com.bpexch.app-packaged_res-31 /Users/apple/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.23/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/flutter_plugin_android_lifecycle/intermediates/packaged_res/debug
+com.bpexch.app-packaged_res-32 /Users/apple/.pub-cache/hosted/pub.dev/image_gallery_saver-2.0.3/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/image_gallery_saver/intermediates/packaged_res/debug
+com.bpexch.app-packaged_res-33 /Users/apple/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+18/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/image_picker_android/intermediates/packaged_res/debug
+com.bpexch.app-packaged_res-34 /Users/apple/.pub-cache/hosted/pub.dev/path_provider_android-2.2.14/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/path_provider_android/intermediates/packaged_res/debug
+com.bpexch.app-packaged_res-35 /Users/apple/.pub-cache/hosted/pub.dev/permission_handler_android-12.0.13/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/permission_handler_android/intermediates/packaged_res/debug
+com.bpexch.app-packaged_res-36 /Users/apple/.pub-cache/hosted/pub.dev/shared_preferences_android-2.3.4/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/shared_preferences_android/intermediates/packaged_res/debug
+com.bpexch.app-packaged_res-37 /Users/apple/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.14/android/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/url_launcher_android/intermediates/packaged_res/debug
+com.bpexch.app-pngs-38 /Users/apple/Desktop/bpexch/android/app/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/app/generated/res/pngs/debug
+com.bpexch.app-resValues-39 /Users/apple/Desktop/bpexch/android/app/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/app/generated/res/resValues/debug
+com.bpexch.app-packageDebugResources-40 /Users/apple/Desktop/bpexch/android/app/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/app/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.bpexch.app-packageDebugResources-41 /Users/apple/Desktop/bpexch/android/app/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/app/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.bpexch.app-merged_res-42 /Users/apple/Desktop/bpexch/android/app/property(org.gradle.api.file.Directory, fixed(class org.gradle.api.internal.file.DefaultFilePropertyFactory$FixedDirectory, /Users/apple/Desktop/bpexch/build))/app/intermediates/merged_res/debug
+com.bpexch.app-debug-43 /Users/apple/Desktop/bpexch/android/app/src/debug/res
+com.bpexch.app-main-44 /Users/apple/Desktop/bpexch/android/app/src/main/res
