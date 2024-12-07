@@ -19,9 +19,19 @@ class LoginService {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final token = responseData['token'];
-        await saveToken(token);
+
+        // Save the token and user data
+        await saveToken(token); // Save token
         print('**********Token saved**********: $token');
-        return LoginResponseModel.fromJson(responseData);
+
+        // Create a LoginResponseModel from the response
+        final loginResponse = LoginResponseModel.fromJson(responseData);
+
+        // Save the user data
+        await saveUser(loginResponse.user); // Save user data
+        print('**********User saved**********: ${loginResponse.user.name}');
+
+        return loginResponse; // Return the LoginResponseModel
       } else {
         throw Exception('Failed to load data');
       }

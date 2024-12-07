@@ -5,6 +5,7 @@ import 'package:bpexch/Service/toast_service.dart';
 import 'package:bpexch/auth/account_verification.dart';
 import 'package:bpexch/auth/signupscreen.dart';
 import 'package:bpexch/provider/animation_provider.dart';
+import 'package:bpexch/utils/saveToken.dart';
 import 'package:bpexch/view/BottomNavBar/bottomnavbar.dart';
 import 'package:bpexch/widgets/custom_elevated_button.dart';
 import 'package:bpexch/widgets/custom_text_field.dart';
@@ -58,9 +59,13 @@ class _LoginScreenState extends State<LoginScreen>
         // Convert the status to lowercase for case-insensitive comparison
         String userStatus = loginResponse.user.status.toLowerCase();
 
+        // Save token and user data before navigating
+        await saveToken(loginResponse.token); // Save the token
+        await saveUser(loginResponse.user); // Save the user data
+
         // Check if the user status is "approved" (case insensitive)
         if (userStatus == 'approved') {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) =>

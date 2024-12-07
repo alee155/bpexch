@@ -1,5 +1,7 @@
+import 'package:bpexch/auth/loginscreen.dart';
 import 'package:bpexch/model/user_model.dart';
 import 'package:bpexch/utils/logout_bottom_sheet.dart';
+import 'package:bpexch/utils/saveToken.dart';
 import 'package:bpexch/view/ChangePassword/change_password.dart';
 import 'package:bpexch/view/TwoScreens/drawer_deposit.dart';
 import 'package:bpexch/view/TwoScreens/drawer_withdraw.dart';
@@ -115,16 +117,24 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   builder: (BuildContext context) {
                     return LogoutBottomSheet(
                       onCancel: () {
-                        Navigator.of(context).pop(false);
+                        Navigator.of(context).pop(
+                            false); // Close the bottom sheet without logging out
                       },
-                      onLogout: () {
-                        Navigator.of(context).pop(true);
+                      onLogout: () async {
+                        // Clear the saved token and user data
+                        await clearUserData();
+                        // Navigate the user to the login screen
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                        );
                       },
                     );
                   },
                 );
               },
-            ),
+            )
           ],
         ),
       ),
