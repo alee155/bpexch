@@ -53,6 +53,40 @@ class _AccountVerificationState extends State<AccountVerification> {
                 SizedBox(
                   height: 20.h,
                 ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 90.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Status',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        ':',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Pending',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 20.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
                 Text(
                   "Be patient, Your account is under verification. You can access all features once your account is approved.",
                   style: TextStyle(

@@ -1,20 +1,23 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:bpexch/Service/toast_service.dart';
-import 'package:bpexch/auth/loginscreen.dart';
-import 'package:bpexch/utils/apis_services/validators.dart';
+import 'package:bpexch/Service/getStoredWhatsappNo.dart';
+import 'package:bpexch/Service/launchWhatsApp.dart';
+import 'package:bpexch/Service/signup_service.dart';
+import 'package:bpexch/utils/text_styles.dart';
 import 'package:bpexch/widgets/custom_elevated_button.dart';
 import 'package:bpexch/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http; // Add this import
-import 'package:toastification/toastification.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  final String? companyInfo;
+  const SignupScreen({super.key, this.companyInfo});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -34,10 +37,12 @@ class _SignupScreenState extends State<SignupScreen>
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-
+  final TimeService _timeService = TimeService(); // Initialize TimeService
+  String? storedWhatsappNo;
   @override
   void initState() {
     super.initState();
+    _loadLogo();
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -46,18 +51,14 @@ class _SignupScreenState extends State<SignupScreen>
     _bounceAnimation = Tween<double>(begin: 1.5, end: 1.2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.elasticInOut),
     );
-  }
 
-  Future<void> openWhatsApp(BuildContext context, String phoneNumber) async {
-    final whatsappUrl = "https://wa.me/$phoneNumber";
-
-    if (await canLaunchUrlString(whatsappUrl)) {
-      await launchUrlString(whatsappUrl, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Could not open WhatsApp")),
-      );
-    }
+    _timeService.fetchTime().then((_) async {
+      // Get stored WhatsApp number after fetching time
+      String? whatsappNo = await _timeService.getStoredWhatsappNo();
+      setState(() {
+        storedWhatsappNo = whatsappNo;
+      });
+    });
   }
 
   @override
@@ -92,117 +93,19 @@ class _SignupScreenState extends State<SignupScreen>
     });
   }
 
-  Future<void> handleSignUp() async {
-    final name = nameController.text.trim();
-    final username = usernameController.text.trim();
-    final phoneNumber = phoneNumberController.text.trim();
-    final password = passwordController.text;
-    final confirmPassword = confirmPasswordController.text;
+  void _launchWhatsApp() async {
+    await launchWhatsApp(
+        storedWhatsappNo); // Call the function from whatsapp_service.dart
+  }
 
-    final nameError = Validators.validateName(name);
-    final usernameError = Validators.validateUsername(username);
-    final phoneNumberError = Validators.validatePhoneNumber(phoneNumber);
-    final passwordError = Validators.validatePassword(password);
-    final confirmPasswordError =
-        Validators.validateConfirmPassword(password, confirmPassword);
+  Uint8List? imageBytes;
+  Future<void> _loadLogo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? base64Logo = prefs.getString('company_logo');
 
-    if (nameError != null ||
-        usernameError != null ||
-        phoneNumberError != null ||
-        passwordError != null ||
-        confirmPasswordError != null) {
-      print(nameError ?? '');
-      print(usernameError ?? '');
-      print(phoneNumberError ?? '');
-      print(passwordError ?? '');
-      print(confirmPasswordError ?? '');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("Please fix the errors before signing up.")),
-      );
-      return;
-    }
-
-    // Create a dummy email from the username or use a default email
-    final email =
-        "$username@bpexch.com"; // You can generate this or use a fixed one like example@example.com
-
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      final response = await http.post(
-        Uri.parse('https://bpexchdeals.com/api/register'),
-        body: {
-          'name': name,
-          'username': username,
-          'phone': phoneNumber,
-          'password': password,
-          'email': email, // Include the dummy email here
-        },
-      );
-
-      // Check if the response is successful
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-
-        if (responseData['result'] == true) {
-          // Success
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-          );
-          String toastTitle = 'Signup Success';
-          String toastMessage =
-              'Welcome! You have created account successfully.';
-          ToastificationType toastType = ToastificationType.success;
-
-          // Call the ToastService
-          ToastService.showToast(
-            context: context,
-            title: toastTitle,
-            message: toastMessage,
-            type: toastType,
-          );
-        } else {
-          String toastTitle = 'Failed';
-          String toastMessage =
-              'Failed to create user: ${responseData['message']}';
-          ToastificationType toastType = ToastificationType.success;
-
-          // Call the ToastService
-          ToastService.showToast(
-            context: context,
-            title: toastTitle,
-            message: toastMessage,
-            type: toastType,
-          );
-        }
-      } else {
-        // HTTP error
-        String toastTitle = 'Failed';
-        String toastMessage = 'Failed to create user';
-        ToastificationType toastType = ToastificationType.success;
-
-        // Call the ToastService
-        ToastService.showToast(
-          context: context,
-          title: toastTitle,
-          message: toastMessage,
-          type: toastType,
-        );
-      }
-    } catch (e) {
-      // Network or unexpected error
-      print('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to create user")),
-      );
-    } finally {
+    if (base64Logo != null) {
       setState(() {
-        isLoading = false;
+        imageBytes = base64Decode(base64Logo);
       });
     }
   }
@@ -260,21 +163,27 @@ class _SignupScreenState extends State<SignupScreen>
                           ),
                         ),
                         padding: const EdgeInsets.all(5),
-                        child: CircleAvatar(
-                          radius: 50.r,
-                          backgroundImage:
-                              const AssetImage('assets/images/bplogo.png'),
-                          backgroundColor: Colors.transparent,
-                        ),
+                        child: imageBytes == null
+                            ? Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: CircleAvatar(
+                                  radius: 50.r,
+                                  backgroundColor: Colors.grey[
+                                      300], // Placeholder background color
+                                ),
+                              )
+                            : CircleAvatar(
+                                radius: 50.r,
+                                backgroundImage:
+                                    Image.memory(imageBytes!).image,
+                                backgroundColor: Colors.transparent,
+                              ),
                       ),
                       SizedBox(height: 10.h),
                       Text(
-                        'Welcome To Signup!',
-                        style: TextStyle(
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        'Welcome To ${widget.companyInfo}',
+                        style: AppTextStyles.appnametext(18),
                       ),
                       SizedBox(height: 20.h),
                       Padding(
@@ -329,7 +238,8 @@ class _SignupScreenState extends State<SignupScreen>
                                 SizedBox(width: 8.w),
                                 GestureDetector(
                                   onTap: () async {
-                                    const url = 'https://www.youtube.com/';
+                                    const url =
+                                        'https://bpexchdeals.com/privacy/policy';
                                     if (await canLaunchUrlString(url)) {
                                       await launchUrlString(url,
                                           mode: LaunchMode.externalApplication);
@@ -361,8 +271,7 @@ class _SignupScreenState extends State<SignupScreen>
                                     );
                                   },
                                   child: GestureDetector(
-                                    onTap: () => openWhatsApp(
-                                        context, "+92 300 8497241"),
+                                    onTap: _launchWhatsApp,
                                     child: Container(
                                       width: 50.w,
                                       height: 50.h,
@@ -370,8 +279,7 @@ class _SignupScreenState extends State<SignupScreen>
                                         shape: BoxShape.circle,
                                         image: DecorationImage(
                                           image: AssetImage(
-                                            'assets/images/whatsapp.png',
-                                          ),
+                                              'assets/images/whatsapp.png'),
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -387,7 +295,27 @@ class _SignupScreenState extends State<SignupScreen>
                               visible: !isLoading,
                               child: CustomElevatedButton(
                                 text: 'Sign up',
-                                onPressed: isFormValid ? handleSignUp : null,
+                                onPressed: isFormValid
+                                    ? () {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        SignupService()
+                                            .handleSignUp(
+                                          context,
+                                          nameController.text.trim(),
+                                          usernameController.text.trim(),
+                                          phoneNumberController.text.trim(),
+                                          passwordController.text,
+                                          confirmPasswordController.text,
+                                        )
+                                            .whenComplete(() {
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                        });
+                                      }
+                                    : null,
                                 height: 60.h,
                                 width: 250.w,
                                 color: isFormValid ? Colors.green : Colors.grey,
@@ -397,7 +325,7 @@ class _SignupScreenState extends State<SignupScreen>
                             Visibility(
                               visible: isLoading,
                               child: SpinKitFadingCircle(
-                                color: Colors.white,
+                                color: Colors.green,
                                 size: 60.r,
                               ),
                             ),

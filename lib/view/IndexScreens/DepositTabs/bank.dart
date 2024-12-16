@@ -1,4 +1,4 @@
-import 'package:bpexch/Service/bank_name_services/bank_service.dart';
+import 'package:bpexch/Service/bank_service.dart';
 import 'package:bpexch/model/GetBank_Model/bank_model.dart';
 import 'package:bpexch/model/user_model.dart';
 import 'package:bpexch/utils/Reusable/blurred_background.dart';

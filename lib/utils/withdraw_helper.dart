@@ -118,13 +118,16 @@ class WithdrawHelper {
             actions: [
               TextButton(
                 onPressed: () {
-                  onSuccess(); // Call the success callback
+                  onSuccess();
+                  Navigator.pop(context);
                 },
-                child: Text("Ok",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold)),
+                child: Text(
+                  "Ok",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),

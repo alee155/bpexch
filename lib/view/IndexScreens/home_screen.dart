@@ -1,20 +1,24 @@
+import 'package:bpexch/Service/getStoredWhatsappNo.dart';
+import 'package:bpexch/Service/launchWhatsApp.dart';
 import 'package:bpexch/model/user_model.dart';
 import 'package:bpexch/provider/pagestate_provider.dart';
 import 'package:bpexch/utils/Reusable/blurred_background.dart';
 import 'package:bpexch/utils/Reusable/glassycontainer.dart';
-import 'package:bpexch/utils/logout_bottom_sheet.dart';
 import 'package:bpexch/view/Drawer/drawer.dart';
 import 'package:bpexch/view/HistoryScreen/history_screen.dart';
+import 'package:bpexch/view/ImageCarousel.dart';
 import 'package:bpexch/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountScreen extends StatefulWidget {
   final UserModel user;
-
-  const AccountScreen({super.key, required this.user});
+  String? companyInfo;
+  AccountScreen({super.key, required this.user, this.companyInfo});
   @override
   _AccountScreenState createState() => _AccountScreenState();
 }
@@ -23,9 +27,12 @@ class _AccountScreenState extends State<AccountScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _bounceAnimation;
+  final TimeService _timeService = TimeService();
+  String? storedWhatsappNo;
 
   @override
   void initState() {
+    _fetchCompanyInfo();
     super.initState();
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
@@ -35,6 +42,12 @@ class _AccountScreenState extends State<AccountScreen>
     _bounceAnimation = Tween<double>(begin: 1.5, end: 1.2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.elasticInOut),
     );
+    _timeService.fetchTime().then((_) async {
+      String? whatsappNo = await _timeService.getStoredWhatsappNo();
+      setState(() {
+        storedWhatsappNo = whatsappNo;
+      });
+    });
   }
 
   @override
@@ -43,43 +56,53 @@ class _AccountScreenState extends State<AccountScreen>
     super.dispose();
   }
 
-  Future<void> openWhatsApp(BuildContext context, String phoneNumber) async {
-    final whatsappUrl = "https://wa.me/$phoneNumber";
-
-    if (await canLaunchUrlString(whatsappUrl)) {
-      await launchUrlString(whatsappUrl, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Could not open WhatsApp")),
-      );
-    }
+  void _launchWhatsApp() async {
+    await launchWhatsApp(storedWhatsappNo);
   }
 
   Future<bool> _onWillPop() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return LogoutBottomSheet(
-          onCancel: () {
-            Navigator.of(context).pop(false);
-          },
-          onLogout: () {
-            Navigator.of(context).pop(true);
-          },
-        );
-      },
-    );
-    return false; // Prevent the back navigation
+    SystemNavigator.pop();
+    return false;
+  }
+
+  Future<void> _fetchCompanyInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedCompanyInfo = prefs.getString('companyInfo');
+    print('***Fetched Company Info: $storedCompanyInfo');
+    setState(() {
+      widget.companyInfo = storedCompanyInfo;
+    });
+  }
+
+  Future<Uint8List?> fetchImageData() async {
+    final url = Uri.parse('https://bpexchdeals.com/api/getAlert');
+    try {
+      final response = await http.post(url);
+      if (response.statusCode == 200) {
+        return response.bodyBytes; // Binary data
+      } else {
+        print('Error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Exception: $e');
+      return null;
+    }
+  }
+
+  Future<void> fetchAlertData() async {
+    final url = Uri.parse('https://bpexchdeals.com/api/getAlert');
+    try {
+      final response = await http.post(url);
+      print('***********:Response Headers: ${response.headers}');
+      print('***********:Response Body: ${response.body}');
+    } catch (e) {
+      print('Exception: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<String> images = [
-      'assets/images/image1.jpeg',
-      'assets/images/image2.jpeg',
-      'assets/images/image3.jpg',
-    ];
-
     return ChangeNotifierProvider(
       create: (_) => PageStateProvider(),
       child: WillPopScope(
@@ -91,7 +114,7 @@ class _AccountScreenState extends State<AccountScreen>
             centerTitle: true,
             iconTheme: const IconThemeData(color: Colors.white),
             title: Text(
-              'bpexch',
+              widget.companyInfo ?? '',
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.sp,
@@ -108,7 +131,7 @@ class _AccountScreenState extends State<AccountScreen>
                 opacity: 0.2,
               ),
               Positioned(
-                top: 50.h,
+                top: 20.h,
                 left: 10.w,
                 right: 10.w,
                 child: Column(
@@ -130,72 +153,8 @@ class _AccountScreenState extends State<AccountScreen>
                       ],
                     ),
                     SizedBox(height: 20.h),
-                    Container(
-                      height: 200.h,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10.r),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Consumer<PageStateProvider>(
-                              builder: (context, provider, _) {
-                                return PageView.builder(
-                                  itemCount: images.length,
-                                  controller: PageController(),
-                                  onPageChanged: (int page) {
-                                    provider.setPage(page);
-                                  },
-                                  itemBuilder: (context, index) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10.r),
-                                      ),
-                                      child: Image.asset(
-                                        images[index],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const ImageCarousel(),
                     SizedBox(height: 10.h),
-                    Consumer<PageStateProvider>(
-                      builder: (context, provider, _) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            images.length,
-                            (index) => AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: EdgeInsets.symmetric(horizontal: 5.w),
-                              height:
-                                  provider.currentPage == index ? 12.h : 8.h,
-                              width: provider.currentPage == index ? 30.w : 8.w,
-                              decoration: BoxDecoration(
-                                color: provider.currentPage == index
-                                    ? Colors.white
-                                    : Colors.grey,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(provider.currentPage == index
-                                      ? 8.r
-                                      : 50.r),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 30.h),
                     CustomElevatedButton(
                       text: 'View History',
                       onPressed: () {
@@ -212,7 +171,7 @@ class _AccountScreenState extends State<AccountScreen>
                       color: const Color.fromARGB(255, 9, 40, 65),
                       borderRadius: 20.r,
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 10.h),
                     Align(
                       alignment: Alignment.topRight,
                       child: AnimatedBuilder(
@@ -224,7 +183,7 @@ class _AccountScreenState extends State<AccountScreen>
                           );
                         },
                         child: GestureDetector(
-                          onTap: () => openWhatsApp(context, "+92 300 8497241"),
+                          onTap: _launchWhatsApp,
                           child: Container(
                             width: 50.w,
                             height: 50.h,

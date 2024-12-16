@@ -1,23 +1,27 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:bpexch/Service/getStoredWhatsappNo.dart';
+import 'package:bpexch/Service/handleLogin.dart';
+import 'package:bpexch/Service/launchWhatsApp.dart';
 import 'package:bpexch/Service/login_service.dart';
-import 'package:bpexch/Service/toast_service.dart';
-import 'package:bpexch/auth/account_verification.dart';
 import 'package:bpexch/auth/signupscreen.dart';
 import 'package:bpexch/provider/animation_provider.dart';
-import 'package:bpexch/utils/saveToken.dart';
-import 'package:bpexch/view/BottomNavBar/bottomnavbar.dart';
+import 'package:bpexch/utils/text_styles.dart';
 import 'package:bpexch/widgets/custom_elevated_button.dart';
 import 'package:bpexch/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-import 'package:toastification/toastification.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
+// ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  String? companyInfo;
+  LoginScreen({super.key, this.companyInfo});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -28,89 +32,59 @@ class _LoginScreenState extends State<LoginScreen>
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
-  final LoginService _loginService = LoginService(); // Initialize service
+  final LoginService _loginService = LoginService();
+  final TimeService _timeService = TimeService();
+  String? storedWhatsappNo;
+
+  Uint8List? imageBytes;
 
   @override
   void dispose() {
+    usernameController.clear();
+    passwordController.clear();
+    isLoading = false;
     usernameController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> handleLogin() async {
-    final username = usernameController.text.trim();
-    final password = passwordController.text.trim();
+  @override
+  void initState() {
+    super.initState();
 
-    if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill in all fields")),
-      );
-      return;
-    }
-
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      final loginResponse = await _loginService.loginUser(username, password);
-
-      if (loginResponse != null) {
-        // Convert the status to lowercase for case-insensitive comparison
-        String userStatus = loginResponse.user.status.toLowerCase();
-
-        // Save token and user data before navigating
-        await saveToken(loginResponse.token); // Save the token
-        await saveUser(loginResponse.user); // Save the user data
-
-        // Check if the user status is "approved" (case insensitive)
-        if (userStatus == 'approved') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  BottomNavBarScreen(user: loginResponse.user),
-            ),
-          );
-          // Show success toast
-          ToastService.showToast(
-            context: context,
-            title: 'Login Success',
-            message: 'Welcome, ${loginResponse.user.name}!',
-            type: ToastificationType.success,
-          );
-        } else if (userStatus == 'pending') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const AccountVerification()),
-          );
-        } else {
-          ToastService.showToast(
-            context: context,
-            title: 'Sorry',
-            message: "Unknown status.",
-            type: ToastificationType.error,
-          );
-        }
-      } else {
-        ToastService.showToast(
-          context: context,
-          title: 'Error',
-          message: 'Failed to connect to the server.',
-          type: ToastificationType.error,
-        );
-      }
-    } catch (e) {
-      print('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("An error occurred. Please try again.")),
-      );
-    } finally {
+    _timeService.fetchTime().then((_) async {
+      String? whatsappNo = await _timeService.getStoredWhatsappNo();
       setState(() {
-        isLoading = false;
+        storedWhatsappNo = whatsappNo;
+      });
+    });
+    _fetchCompanyInfo();
+    _loadLogo();
+  }
+
+  Future<void> _fetchCompanyInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedCompanyInfo = prefs.getString('companyInfo');
+    print('***Fetched Company Info: $storedCompanyInfo');
+    setState(() {
+      widget.companyInfo = storedCompanyInfo;
+    });
+  }
+
+  // Load the logo from SharedPreferences
+  Future<void> _loadLogo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? base64Logo = prefs.getString('company_logo');
+
+    if (base64Logo != null) {
+      setState(() {
+        imageBytes = base64Decode(base64Logo);
       });
     }
+  }
+
+  void _launchWhatsApp() async {
+    await launchWhatsApp(storedWhatsappNo);
   }
 
   @override
@@ -144,16 +118,14 @@ class _LoginScreenState extends State<LoginScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          height: 100.h,
-                        ),
+                        SizedBox(height: 100.h),
                         Column(
                           children: [
                             AnimatedBuilder(
                               animation: animationProvider.controller,
                               builder: (context, child) {
                                 return Container(
-                                  padding: const EdgeInsets.all(6),
+                                  padding: EdgeInsets.all(6.r),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     gradient: LinearGradient(
@@ -169,24 +141,29 @@ class _LoginScreenState extends State<LoginScreen>
                                       end: Alignment.bottomRight,
                                     ),
                                   ),
-                                  child: CircleAvatar(
-                                    radius: 80.r,
-                                    backgroundImage: const AssetImage(
-                                        'assets/images/bplogo.png'),
-                                    backgroundColor: Colors.transparent,
-                                  ),
+                                  child: imageBytes == null
+                                      ? Shimmer.fromColors(
+                                          baseColor: Colors.grey[300]!,
+                                          highlightColor: Colors.grey[100]!,
+                                          child: CircleAvatar(
+                                            radius: 80.r,
+                                            backgroundColor: Colors.grey[
+                                                300], // Placeholder background color
+                                          ),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 80.r,
+                                          backgroundImage:
+                                              Image.memory(imageBytes!).image,
+                                          backgroundColor: Colors.transparent,
+                                        ),
                                 );
                               },
                             ),
                             SizedBox(height: 20.h),
                             Text(
-                              'Welcome To Login Page!',
-                              style: TextStyle(
-                                fontSize: 24.sp,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                              'Welcome To ${widget.companyInfo}',
+                              style: AppTextStyles.appnametext(18),
                             ),
                             SizedBox(height: 30.h),
                             Padding(
@@ -220,25 +197,19 @@ class _LoginScreenState extends State<LoginScreen>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SignupScreen(),
+                                    builder: (context) => SignupScreen(
+                                        companyInfo: widget.companyInfo),
                                   ),
                                 );
                               },
                               child: RichText(
                                 text: TextSpan(
                                   text: "Don't have an account? ",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.sp,
-                                  ),
+                                  style: AppTextStyles.whiteText(16),
                                   children: <TextSpan>[
                                     TextSpan(
                                       text: "Sign up",
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: AppTextStyles.greenText(16),
                                     ),
                                   ],
                                 ),
@@ -246,33 +217,16 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                             SizedBox(height: 20.h),
                             GestureDetector(
-                              onTap: () async {
-                                const url = 'https://www.youtube.com/';
-                                if (await canLaunchUrlString(url)) {
-                                  await launchUrlString(url,
-                                      mode: LaunchMode.externalApplication);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Could not launch $url')),
-                                  );
-                                }
-                              },
+                              onTap:
+                                  _launchWhatsApp, // Launch WhatsApp when tapped
                               child: RichText(
                                 text: TextSpan(
                                   text: "Facing a problem? ",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.sp,
-                                  ),
+                                  style: AppTextStyles.whiteText(16),
                                   children: <TextSpan>[
                                     TextSpan(
                                       text: "Click here.",
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: AppTextStyles.greenText(16),
                                     ),
                                   ],
                                 ),
@@ -285,7 +239,24 @@ class _LoginScreenState extends State<LoginScreen>
                           visible: !isLoading,
                           child: CustomElevatedButton(
                             text: 'Login',
-                            onPressed: () => handleLogin(),
+                            onPressed: () {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              handleLogin(
+                                context,
+                                usernameController.text.trim(),
+                                passwordController.text.trim(),
+                                _loginService,
+                                usernameController,
+                                passwordController,
+                                (bool loading) {
+                                  setState(() {
+                                    isLoading = loading;
+                                  });
+                                },
+                              );
+                            },
                             height: 60.h,
                             width: 250.w,
                             color: Colors.green,

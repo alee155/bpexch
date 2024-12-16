@@ -62,8 +62,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
               } else if (snapshot.hasError) {
                 return Center(
                   child: Text(
-                    'Error: ${snapshot.error}',
-                    style: AppTextStyles.redText(16),
+                    'No Record Found',
+                    style: AppTextStyles.whiteText(16),
                   ),
                 );
               } else if (snapshot.hasData && snapshot.data!.isEmpty) {
@@ -214,11 +214,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       opacity: 0.1,
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(10),
-                                        child: Image.asset(
-                                          transaction.status == 'Approved'
-                                              ? 'assets/images/approved.jpg'
-                                              : 'assets/images/pending.jpg',
-                                          fit: BoxFit.cover,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(10.r),
+                                          child: Image.asset(
+                                            transaction.status == 'Approved'
+                                                ? 'assets/images/approved.jpg'
+                                                : transaction.status ==
+                                                        'Rejected'
+                                                    ? 'assets/images/rej.jpg'
+                                                    : 'assets/images/pending.jpg',
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
                                     ),

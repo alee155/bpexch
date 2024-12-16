@@ -1,9 +1,11 @@
 import 'package:bpexch/model/user_model.dart';
+import 'package:bpexch/view/FaqScreen/faq_screen.dart';
 import 'package:bpexch/view/IndexScreens/deposit_screen.dart';
 import 'package:bpexch/view/IndexScreens/home_screen.dart';
 import 'package:bpexch/view/IndexScreens/link_screen.dart';
 import 'package:bpexch/view/IndexScreens/wallet_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class BottomNavBarScreen extends StatefulWidget {
@@ -22,7 +24,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
     'assets/icons/card.svg',
     'assets/icons/deposit.svg',
     'assets/icons/link.svg',
-    'assets/icons/whatsapp.svg',
+    'assets/icons/faq.svg',
   ];
 
   // _screens initialization moved to the build method
@@ -32,9 +34,10 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
   Widget build(BuildContext context) {
     _screens = [
       AccountScreen(user: widget.user),
-      const WalletScreen(),
+      WalletScreen(user: widget.user),
       DepositScreen(user: widget.user),
       const WebViewScreen(),
+      const FaqScreen(),
     ];
 
     return Scaffold(
@@ -83,10 +86,32 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
             ),
             label: 'Link',
           ),
+          BottomNavigationBarItem(
+            backgroundColor: Colors.black,
+            icon: SvgPicture.asset(
+              _iconPaths[4],
+              width: 30,
+              height: 30,
+              color: _getIconColor(4),
+            ),
+            label: 'Faq',
+          ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
+        selectedLabelStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 14.sp,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 12.sp,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.normal,
+          color: Colors.grey,
+        ),
         onTap: _onItemTapped,
       ),
     );

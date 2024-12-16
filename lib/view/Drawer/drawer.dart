@@ -2,7 +2,9 @@ import 'package:bpexch/auth/loginscreen.dart';
 import 'package:bpexch/model/user_model.dart';
 import 'package:bpexch/utils/logout_bottom_sheet.dart';
 import 'package:bpexch/utils/saveToken.dart';
+import 'package:bpexch/utils/text_styles.dart';
 import 'package:bpexch/view/ChangePassword/change_password.dart';
+import 'package:bpexch/view/DrawerLinkScreen/drawerlinkscreen.dart';
 import 'package:bpexch/view/TwoScreens/drawer_deposit.dart';
 import 'package:bpexch/view/TwoScreens/drawer_withdraw.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +34,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 color: Color.fromARGB(255, 9, 40, 65),
               ),
               child: CircleAvatar(
-                radius: 80.r,
+                radius: 60.r,
                 backgroundColor: Colors.transparent,
                 child: Icon(
                   Icons.account_circle,
-                  size: 160.r,
+                  size: 100.r,
                   color: Colors.white,
                 ),
               ),
@@ -48,7 +50,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 height: 24.h,
                 color: Colors.white,
               ),
-              title: const Text('Withdraw'),
+              title: Text(
+                'Withdraw',
+                style: AppTextStyles.appnametext(16),
+              ),
               onTap: () {
                 Navigator.of(context).pop(true);
                 Navigator.push(
@@ -65,7 +70,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 height: 24.h,
                 color: Colors.white,
               ),
-              title: const Text('Deposit'),
+              title: Text(
+                'Deposit',
+                style: AppTextStyles.appnametext(16),
+              ),
               onTap: () {
                 Navigator.of(context).pop(true);
                 Navigator.push(
@@ -83,8 +91,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 height: 24.h,
                 color: Colors.white,
               ),
-              title: const Text('bpexch'),
-              onTap: () {},
+              title: Text(
+                'bpexch',
+                style: AppTextStyles.appnametext(16),
+              ),
+              onTap: () {
+                Navigator.of(context).pop(true);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const DrawerWebViewScreen()),
+                );
+              },
             ),
             ListTile(
               leading: SvgPicture.asset(
@@ -93,7 +111,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 height: 24.h,
                 color: Colors.white,
               ),
-              title: const Text('change passowrd'),
+              title: Text(
+                'Change Passowrd',
+                style: AppTextStyles.appnametext(16),
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -109,7 +130,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 height: 24.h,
                 color: Colors.white,
               ),
-              title: const Text('Logout'),
+              title: Text(
+                'Logout',
+                style: AppTextStyles.appnametext(16),
+              ),
               onTap: () {
                 Navigator.of(context).pop(true);
                 showModalBottomSheet(
@@ -127,7 +151,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
+                              builder: (context) => LoginScreen()),
                         );
                       },
                     );

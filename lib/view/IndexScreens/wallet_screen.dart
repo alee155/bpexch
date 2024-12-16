@@ -1,3 +1,4 @@
+import 'package:bpexch/model/user_model.dart';
 import 'package:bpexch/utils/Reusable/blurred_background.dart';
 import 'package:bpexch/utils/text_styles.dart';
 import 'package:bpexch/utils/time_helper.dart';
@@ -11,7 +12,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class WalletScreen extends StatefulWidget {
-  const WalletScreen({super.key});
+  final UserModel user;
+  const WalletScreen({super.key, required this.user});
 
   @override
   State<WalletScreen> createState() => _WalletScreenState();
@@ -29,12 +31,25 @@ class _WalletScreenState extends State<WalletScreen> {
   String description = '';
   late String currentTime;
 
+  bool get isFormValid =>
+      _amountController.text.isNotEmpty &&
+      payment_method.isNotEmpty &&
+      _accountDetailsController.text.isNotEmpty;
+
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
     currentTime = "${now.hour}:${now.minute}:${now.second}";
     print("***************Current Time: $currentTime ***************");
+
+    // Add listeners to validate the form whenever a value changes.
+    _amountController.addListener(() {
+      setState(() {}); // Updates the form validity
+    });
+    _accountDetailsController.addListener(() {
+      setState(() {}); // Updates the form validity
+    });
   }
 
   @override
@@ -47,6 +62,8 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   Future<void> _onWithdrawPressed() async {
+    if (!isFormValid) return; // Prevent button press if form is invalid.
+
     setState(() {
       isLoading = true; // Show the loading animation
     });
@@ -116,11 +133,11 @@ class _WalletScreenState extends State<WalletScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Bp Muhammad Ali",
+                        widget.user.bpUsername ?? 'N/A',
                         style: WallatTextStyle.subtitleStyle,
                       ),
                       Text(
-                        "Password",
+                        widget.user.bpPassword ?? 'N/A',
                         style: WallatTextStyle.subtitleStyle,
                       ),
                     ],
@@ -211,10 +228,10 @@ class _WalletScreenState extends State<WalletScreen> {
                         )
                       : CustomElevatedButton(
                           text: 'Withdraw',
-                          onPressed: _onWithdrawPressed,
+                          onPressed: isFormValid ? _onWithdrawPressed : null,
                           height: 60.h,
                           width: MediaQuery.of(context).size.width,
-                          color: Colors.green,
+                          color: isFormValid ? Colors.green : Colors.grey,
                           borderRadius: 20.r,
                         ),
                   SizedBox(height: 20.h),

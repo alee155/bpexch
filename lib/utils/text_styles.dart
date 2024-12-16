@@ -3,7 +3,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTextStyles {
   static TextStyle whiteText(double fontSize) {
-    return TextStyle(color: Colors.white, fontSize: fontSize.sp);
+    return TextStyle(
+      color: Colors.white,
+      fontSize: fontSize.sp,
+    );
+  }
+
+  static TextStyle appnametext(double fontSize) {
+    return TextStyle(
+      color: Colors.white,
+      fontSize: fontSize.sp,
+      fontFamily: 'Roboto',
+      fontWeight: FontWeight.bold,
+    );
+  }
+  static TextStyle signuptext(double fontSize) {
+    return TextStyle(
+       
+        color: Colors.green,
+        fontWeight: FontWeight.bold,
+        fontSize: fontSize.sp);
   }
 
   static TextStyle greenText(double fontSize) {

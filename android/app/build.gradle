@@ -42,3 +42,7 @@ android {
 flutter {
     source = "../.."
 }
+dependencies {
+    implementation 'javax.annotation:javax.annotation-api:1.3.2' // For javax.annotation
+    implementation 'com.google.guava:guava:31.1-jre' // For errorprone annotations
+}
