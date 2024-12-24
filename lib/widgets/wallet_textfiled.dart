@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CustomAmountTextField extends StatelessWidget {
@@ -66,17 +67,19 @@ class CustomAmountTextField extends StatelessWidget {
 class CustomAccountDetailsTextField extends StatelessWidget {
   final FocusNode focusNode;
   final TextEditingController controller;
+  final Function(String value) onChanged;
 
   const CustomAccountDetailsTextField({
     required this.focusNode,
     required this.controller,
+    required this.onChanged,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120,
+      height: 120.h,
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(10),
@@ -98,6 +101,56 @@ class CustomAccountDetailsTextField extends StatelessWidget {
             horizontal: 20,
           ),
         ),
+        onChanged: onChanged, // Invoke the callback when the value changes
+        onTap: () {
+          // Unfocus other field when tapped
+          if (focusNode.hasFocus) {
+            focusNode.unfocus();
+          }
+        },
+      ),
+    );
+  }
+}
+
+class DrawerWithdraw extends StatelessWidget {
+  final FocusNode focusNode;
+  final TextEditingController controller;
+  final Function(String value) onChanged;
+
+  const DrawerWithdraw({
+    required this.focusNode,
+    required this.controller,
+    required this.onChanged,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 150.h,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white),
+      ),
+      child: TextField(
+        controller: controller,
+        cursorColor: Colors.green,
+        focusNode: focusNode,
+        maxLines: null,
+        decoration: InputDecoration(
+          hintText: "Enter account details",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 15,
+            horizontal: 20,
+          ),
+        ),
+        onChanged: onChanged, // Invoke the callback when the value changes
         onTap: () {
           // Unfocus other field when tapped
           if (focusNode.hasFocus) {

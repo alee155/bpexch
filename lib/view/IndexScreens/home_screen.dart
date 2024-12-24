@@ -4,6 +4,7 @@ import 'package:bpexch/model/user_model.dart';
 import 'package:bpexch/provider/pagestate_provider.dart';
 import 'package:bpexch/utils/Reusable/blurred_background.dart';
 import 'package:bpexch/utils/Reusable/glassycontainer.dart';
+import 'package:bpexch/utils/logout_bottom_sheet.dart';
 import 'package:bpexch/view/Drawer/drawer.dart';
 import 'package:bpexch/view/HistoryScreen/history_screen.dart';
 import 'package:bpexch/view/ImageCarousel.dart';
@@ -61,7 +62,20 @@ class _AccountScreenState extends State<AccountScreen>
   }
 
   Future<bool> _onWillPop() async {
-    SystemNavigator.pop();
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return CloseAppSheet(
+          onCancel: () {
+            Navigator.of(context).pop(false);
+          },
+          onLogout: () {
+            SystemNavigator.pop();
+          },
+        );
+      },
+    );
+
     return false;
   }
 

@@ -62,7 +62,7 @@ class _DrawerDepositScreenState extends State<DrawerDepositScreen>
             opacity: 0.2,
           ),
           Positioned(
-            top: 20.h,
+            top: 10.h,
             left: 10.w,
             right: 10.w,
             child: Column(
@@ -87,7 +87,7 @@ class _DrawerDepositScreenState extends State<DrawerDepositScreen>
             ),
           ),
           Positioned(
-            top: 120.h,
+            top: 100.h,
             left: 10.w,
             right: 10.w,
             child: Column(
@@ -143,7 +143,7 @@ class _DrawerDepositScreenState extends State<DrawerDepositScreen>
           ),
           // PageView for content outside of the Container
           Positioned(
-            top: 200.h, // Adjust top position to avoid overlap with the TabBar
+            top: 180.h, // Adjust top position to avoid overlap with the TabBar
             left: 10.w,
             right: 10.w,
             child: SizedBox(

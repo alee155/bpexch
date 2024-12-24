@@ -15,7 +15,7 @@ class WithdrawHelper {
     required TextEditingController amountController,
     required TextEditingController accountDetailsController,
     required String paymentMethod,
-    required VoidCallback onSuccess,
+    required VoidCallback onSuccess, // onSuccess callback to stop loading
   }) async {
     final amount = amountController.text.trim();
     final accountDetails = accountDetailsController.text.trim();
@@ -92,8 +92,14 @@ class WithdrawHelper {
         body: json.encode(body),
       );
 
-      // Handle the response
+      // Debugging log to verify response status
+      print("Response status: ${response.statusCode}");
+
       if (response.statusCode == 200) {
+        // Stop loading immediately after successful response
+        print("Withdrawal successful, stopping loading...");
+        onSuccess(); // Stop the loading spinner in WithdrawtScreen
+
         // Decode and print the response
         final responseData = json.decode(response.body);
         print('Response: $responseData');
@@ -108,8 +114,7 @@ class WithdrawHelper {
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold)),
             content: Text(
-              "Your request is successfully submitted.\n"
-              "Once the request is approved, the desired amount will be deducted from your wallet and sent to the beneficiary account.",
+              "Your request is successfully submitted.",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 15.sp,
@@ -118,7 +123,6 @@ class WithdrawHelper {
             actions: [
               TextButton(
                 onPressed: () {
-                  onSuccess();
                   Navigator.pop(context);
                 },
                 child: Text(
@@ -136,9 +140,10 @@ class WithdrawHelper {
         final errorResponse = json.decode(response.body);
         ToastService.showToast(
           context: context,
-          title: 'Error',
+          title: 'Sorry',
           message: errorResponse['message'] ?? 'Something went wrong.',
           type: ToastificationType.error,
+          autoCloseDuration: const Duration(seconds: 10),
         );
       }
     } catch (e) {

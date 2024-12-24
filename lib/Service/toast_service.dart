@@ -7,12 +7,14 @@ class ToastService {
     required String title,
     required String message,
     ToastificationType type = ToastificationType.success,
+    Duration autoCloseDuration =
+        const Duration(seconds: 5), // Allowing autoCloseDuration to be passed
   }) {
     toastification.show(
       context: context,
       type: type,
       style: ToastificationStyle.flat,
-      autoCloseDuration: const Duration(seconds: 5),
+      autoCloseDuration: autoCloseDuration, // Use the passed value here
       title: Text(
         title,
         style: const TextStyle(fontWeight: FontWeight.bold),

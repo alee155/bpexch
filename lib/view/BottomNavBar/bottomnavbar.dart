@@ -27,6 +27,13 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
     'assets/icons/faq.svg',
   ];
 
+  // Callback to handle back press and navigate to the first index
+  void onBackPressed() {
+    setState(() {
+      _selectedIndex = 0; // Navigate to the first tab (Home tab)
+    });
+  }
+
   // _screens initialization moved to the build method
   late List<Widget> _screens;
 
@@ -34,10 +41,10 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
   Widget build(BuildContext context) {
     _screens = [
       AccountScreen(user: widget.user),
-      WalletScreen(user: widget.user),
-      DepositScreen(user: widget.user),
-      const WebViewScreen(),
-      const FaqScreen(),
+      WithdrawScreen(user: widget.user, onBackPressed: onBackPressed),
+      DepositScreen(user: widget.user, onBackPressed: onBackPressed),
+      WebViewScreen(onBackPressed: onBackPressed),
+      FaqScreen(onBackPressed: onBackPressed),
     ];
 
     return Scaffold(
@@ -94,7 +101,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
               height: 30,
               color: _getIconColor(4),
             ),
-            label: 'Faq',
+            label: 'FAQs',
           ),
         ],
         currentIndex: _selectedIndex,

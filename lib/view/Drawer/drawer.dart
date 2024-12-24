@@ -59,7 +59,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const DrawerWalletScreen()),
+                      builder: (context) =>
+                          DrawerWalletScreen(user: widget.user)),
                 );
               },
             ),
@@ -109,17 +110,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 'assets/icons/lock.svg',
                 width: 24.w,
                 height: 24.h,
+                // ignore: deprecated_member_use
                 color: Colors.white,
               ),
               title: Text(
-                'Change Passowrd',
+                'Change Password',
                 style: AppTextStyles.appnametext(16),
               ),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ChangePassword(user: widget.user)),
+                    builder: (context) => ChangePassword(user: widget.user),
+                  ),
                 );
               },
             ),

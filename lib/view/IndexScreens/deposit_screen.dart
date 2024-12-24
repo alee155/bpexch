@@ -9,7 +9,9 @@ import '../../utils/Reusable/blurred_background.dart';
 
 class DepositScreen extends StatefulWidget {
   final UserModel user;
-  const DepositScreen({super.key, required this.user});
+  final VoidCallback onBackPressed;
+  const DepositScreen(
+      {super.key, required this.user, required this.onBackPressed});
 
   @override
   State<DepositScreen> createState() => _DepositScreenState();
@@ -44,117 +46,125 @@ class _DepositScreenState extends State<DepositScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          const BlurredBackground(
-            imagePath: 'assets/images/appimage.jpg',
-            blurSigmaX: 15,
-            blurSigmaY: 15,
-            opacity: 0.2,
-          ),
-          Positioned(
-            top: 60.h,
-            left: 10.w,
-            right: 10.w,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Select an account",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "Transfer funds on selected account and click Transfer Button",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 17.sp,
-                  ),
-                ),
-              ],
+    return WillPopScope(
+      onWillPop: () async {
+        // Trigger the onBackPressed callback to navigate to the first index
+        widget.onBackPressed();
+        return false; // Prevent default pop behavior
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            const BlurredBackground(
+              imagePath: 'assets/images/appimage.jpg',
+              blurSigmaX: 15,
+              blurSigmaY: 15,
+              opacity: 0.2,
             ),
-          ),
-          Positioned(
-            top: 150.h,
-            left: 10.w,
-            right: 10.w,
-            child: Column(
-              children: [
-                Container(
-                  height: 70.h,
-                  padding: EdgeInsets.all(8.r),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(color: Colors.white, width: 1.5),
+            Positioned(
+              top: 60.h,
+              left: 10.w,
+              right: 10.w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Select an account",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold),
                   ),
-                  child: Column(
-                    children: [
-                      // TabBar with custom blurred indicator
-                      TabBar(
-                        controller: _tabController,
-                        onTap: _onTabChanged,
-                        tabs: const [
-                          Tab(text: "Bank"),
-                          Tab(text: "Jazz Cash"),
-                          Tab(text: "Easypaisa"),
-                        ],
-                        labelColor: Colors.white,
-                        unselectedLabelColor: Colors.grey,
-                        indicator: BoxDecoration(
-                          color: Colors.white.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(10.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.9),
-                              blurRadius: 5,
-                            ),
-                          ],
-                          // Adding the blur filter
-                          image: DecorationImage(
-                            image:
-                                const AssetImage('assets/images/appimage.jpg'),
-                            fit: BoxFit.cover,
-                            colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.9),
-                              BlendMode.dstATop,
-                            ),
-                          ),
-                        ),
-                        indicatorSize: TabBarIndicatorSize.tab,
-                      ),
-                    ],
+                  Text(
+                    "Transfer funds on selected account and click Transfer Button",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 17.sp,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          // PageView for content outside of the Container
-          Positioned(
-            top: 240.h, // Adjust top position to avoid overlap with the TabBar
-            left: 10.w,
-            right: 10.w,
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height -
-                  180, // Adjust height for the PageView
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: _onPageChanged,
-                physics:
-                    const NeverScrollableScrollPhysics(), // Disable swipe gesture
-                children:  [
-                  BanksTab(user: widget.user),
-                  JazzCashTab(user: widget.user),
-                  EasypaisaTab(user: widget.user),
                 ],
               ),
             ),
-          ),
-        ],
+            Positioned(
+              top: 150.h,
+              left: 10.w,
+              right: 10.w,
+              child: Column(
+                children: [
+                  Container(
+                    height: 70.h,
+                    padding: EdgeInsets.all(8.r),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(10.r),
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                    child: Column(
+                      children: [
+                        // TabBar with custom blurred indicator
+                        TabBar(
+                          controller: _tabController,
+                          onTap: _onTabChanged,
+                          tabs: const [
+                            Tab(text: "Bank"),
+                            Tab(text: "Jazz Cash"),
+                            Tab(text: "Easypaisa"),
+                          ],
+                          labelColor: Colors.white,
+                          unselectedLabelColor: Colors.grey,
+                          indicator: BoxDecoration(
+                            color: Colors.white.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(10.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.9),
+                                blurRadius: 5,
+                              ),
+                            ],
+                            // Adding the blur filter
+                            image: DecorationImage(
+                              image: const AssetImage(
+                                  'assets/images/appimage.jpg'),
+                              fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.9),
+                                BlendMode.dstATop,
+                              ),
+                            ),
+                          ),
+                          indicatorSize: TabBarIndicatorSize.tab,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // PageView for content outside of the Container
+            Positioned(
+              top:
+                  240.h, // Adjust top position to avoid overlap with the TabBar
+              left: 10.w,
+              right: 10.w,
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height -
+                    180, // Adjust height for the PageView
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: _onPageChanged,
+                  physics:
+                      const NeverScrollableScrollPhysics(), // Disable swipe gesture
+                  children: [
+                    BanksTab(user: widget.user),
+                    JazzCashTab(user: widget.user),
+                    EasypaisaTab(user: widget.user),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -53,12 +53,18 @@ class _SignupScreenState extends State<SignupScreen>
     );
 
     _timeService.fetchTime().then((_) async {
-      // Get stored WhatsApp number after fetching time
       String? whatsappNo = await _timeService.getStoredWhatsappNo();
       setState(() {
         storedWhatsappNo = whatsappNo;
       });
     });
+
+    // Add listeners to text controllers
+    nameController.addListener(_validateForm);
+    usernameController.addListener(_validateForm);
+    phoneNumberController.addListener(_validateForm);
+    passwordController.addListener(_validateForm);
+    confirmPasswordController.addListener(_validateForm);
   }
 
   @override
@@ -229,7 +235,7 @@ class _SignupScreenState extends State<SignupScreen>
                                   onChanged: (value) {
                                     setState(() {
                                       isChecked = value!;
-                                      _validateForm();
+                                      _validateForm(); // Revalidate the form when checkbox changes
                                     });
                                   },
                                   activeColor: Colors.green,

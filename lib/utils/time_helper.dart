@@ -1,109 +1,43 @@
+// time_api.dart
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
-class TimeHelper {
-  // Method to get the time and check if the current time is within the allowed range
-  static Future<Map<String, dynamic>> validateTime(String currentTime) async {
+class TimeAPI {
+  static Future<Map<String, dynamic>> fetchTime() async {
+    final url = Uri.parse('https://bpexchdeals.com/api/getTime');
     try {
-      // Step 1: Make the POST API call to get the time
-      final response = await http.post(
-        Uri.parse('https://bpexchdeals.com/api/getTime'),
-      );
+      final response = await http.post(url);
 
-      // Step 2: Handle the response
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final result = responseData['result'];
+        final data = jsonDecode(response.body);
 
-        if (result == true) {
-          final List<dynamic> data = responseData['Data'] ?? [];
-          if (data.isNotEmpty) {
-            final timeData =
-                data[0]; // Assuming we are only dealing with the first item
-            final fromTime = timeData['from_time'] ?? '';
-            final toTime = timeData['to_time'] ?? '';
-            final errorMessage = responseData['error'] ?? 'An error occurred';
+        String currentTime = data['currentTime'] ?? '';
+        String fromTime = data['Data'][0]['from_time'] ?? '';
+        String toTime = data['Data'][0]['to_time'] ?? '';
+        bool isWithinRange = data['isWithinRange'] ?? false;
 
-            // Step 3: Compare currentTime with from_time and to_time
-            if (_isCurrentTimeBetween(fromTime, toTime, currentTime)) {
-              return {
-                'isWithinRange': true,
-                'message':
-                    'Current time is within the valid range ($fromTime to $toTime).',
-              };
-            } else {
-              return {
-                'isWithinRange': false,
-                'message':
-                    'Current time is not within the valid range ($fromTime to $toTime). $errorMessage',
-              };
-            }
-          } else {
-            return {
-              'isWithinRange': false,
-              'message': 'No valid data found in the response.',
-            };
-          }
-        } else {
-          return {
-            'isWithinRange': false,
-            'message': 'Error: ${responseData['error']}',
-          };
-        }
-      } else {
+        DateTime parsedCurrentTime = DateFormat('HH:mm:ss').parse(currentTime);
+        String formattedCurrentTime =
+            DateFormat('hh:mm a').format(parsedCurrentTime);
+
+        DateTime parsedFromTime = DateFormat('HH:mm:ss').parse(fromTime);
+        DateTime parsedToTime = DateFormat('HH:mm:ss').parse(toTime);
+
+        String formattedFromTime = DateFormat('hh:mm a').format(parsedFromTime);
+        String formattedToTime = DateFormat('hh:mm a').format(parsedToTime);
+
         return {
-          'isWithinRange': false,
-          'message': 'Failed to load data from API.',
+          'formattedFromTime': formattedFromTime,
+          'formattedToTime': formattedToTime,
+          'isWithinRange': isWithinRange,
         };
+      } else {
+        throw Exception("Error fetching time: ${response.statusCode}");
       }
-    } catch (e) {
-      return {
-        'isWithinRange': false,
-        'message': 'An error occurred during the API call: $e',
-      };
+    } catch (error) {
+      throw Exception("Error: $error");
     }
-  }
-
-  // Method to check if the current time is between from_time and to_time
-  static bool _isCurrentTimeBetween(
-      String fromTime, String toTime, String currentTime) {
-    final current = _parseTime(currentTime);
-    final from = _parseTime(fromTime);
-    final to = _parseTime(toTime);
-
-    return current.isAfter(from) && current.isBefore(to);
-  }
-
-  // Method to convert a time string to a DateTime object
-  static DateTime _parseTime(String time) {
-    final parts = time.split(':');
-    final hour = int.parse(parts[0]);
-    final minute = int.parse(parts[1]);
-    final second = int.parse(parts[2]);
-    return DateTime(0, 0, 0, hour, minute, second); // Using a dummy date
-  }
-
-  // Method to show error dialog with a message
-  static void showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

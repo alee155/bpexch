@@ -1,6 +1,7 @@
 import 'package:bpexch/model/faq_model.dart';
 import 'package:bpexch/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,11 +22,15 @@ class FaqItem extends StatelessWidget {
 
   // Helper function to check if the string should be treated as a link
   bool _isLink(String text) {
-    return text.toLowerCase().contains("link");
+    return text.toLowerCase().contains("http") ||
+        text.toLowerCase().contains("link");
   }
 
   @override
   Widget build(BuildContext context) {
+    // Log the content once during the widget's build
+    debugPrint('--- FAQ Content ---\n${faq.content}\n-------------------');
+
     return Card(
       elevation: 5,
       margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
@@ -60,20 +65,6 @@ class FaqItem extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Text(
-                faq.status,
-                style: AppTextStyles.whiteText(12).copyWith(
-                  color: Colors.green,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
           ],
         ),
         children: [
@@ -82,47 +73,49 @@ class FaqItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_isLink(faq.type)) ...[
+                if (_isLink(faq.content)) ...[
+                  // Show a button to view the link
                   SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () => _launchURL(faq.content),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade800,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12.h, horizontal: 20.w),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _launchURL(faq.content),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade800,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12.h, horizontal: 20.w),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
-                        icon: Icon(
-                          Icons.link,
-                          size: 18.r,
+                      ),
+                      icon: Icon(
+                        Icons.link,
+                        size: 18.r,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'View Link',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
-                        label: Text(
-                          'View Link',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )),
-                  SizedBox(height: 12.h),
-                ],
-                Text(
-                  _isLink(faq.type) ? 'Details:' : faq.type,
-                  style: AppTextStyles.whiteText(14).copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[400],
+                      ),
+                    ),
                   ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  faq.content,
-                  style: AppTextStyles.whiteText(14),
-                ),
+                  SizedBox(height: 12.h),
+                ] else ...[
+                  // Render HTML content if it exists
+                  Html(
+                    data: faq.content,
+                    style: {
+                      "body": Style(
+                        color: Colors.white,
+                        fontSize: FontSize(14.sp),
+                      ),
+                    },
+                  ),
+                  SizedBox(height: 8.h),
+                ],
               ],
             ),
           ),

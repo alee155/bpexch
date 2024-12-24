@@ -9,7 +9,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../model/faq_model.dart';
 
 class FaqScreen extends StatefulWidget {
-  const FaqScreen({super.key});
+  final VoidCallback onBackPressed;
+
+  const FaqScreen({super.key, required this.onBackPressed});
 
   @override
   State<FaqScreen> createState() => _FaqScreenState();
@@ -43,43 +45,50 @@ class _FaqScreenState extends State<FaqScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Faqs',
-          style: AppTextStyles.whiteText(20),
+    return WillPopScope(
+      onWillPop: () async {
+        // Trigger the onBackPressed callback to navigate to the first index
+        widget.onBackPressed();
+        return false; // Prevent default pop behavior
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            'Faqs',
+            style: AppTextStyles.whiteText(20),
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
-          const BlurredBackground(
-            imagePath: 'assets/images/appimage.jpg',
-            blurSigmaX: 15,
-            blurSigmaY: 15,
-            opacity: 0.2,
-          ),
-          Positioned.fill(
-            child: isFetchingData
-                ? SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        13,
-                        (index) => const ShimmerFaqItem(),
+        body: Stack(
+          children: [
+            const BlurredBackground(
+              imagePath: 'assets/images/appimage.jpg',
+              blurSigmaX: 15,
+              blurSigmaY: 15,
+              opacity: 0.2,
+            ),
+            Positioned.fill(
+              child: isFetchingData
+                  ? SingleChildScrollView(
+                      child: Column(
+                        children: List.generate(
+                          13,
+                          (index) => const ShimmerFaqItem(),
+                        ),
                       ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
+                      itemCount: faqs.length,
+                      itemBuilder: (context, index) {
+                        final faq = faqs[index];
+                        return FaqItem(faq: faq);
+                      },
                     ),
-                  )
-                : ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    itemCount: faqs.length,
-                    itemBuilder: (context, index) {
-                      final faq = faqs[index];
-                      return FaqItem(faq: faq);
-                    },
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

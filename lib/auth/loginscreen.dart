@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:bpexch/Service/getStoredWhatsappNo.dart';
@@ -12,6 +11,7 @@ import 'package:bpexch/utils/text_styles.dart';
 import 'package:bpexch/widgets/custom_elevated_button.dart';
 import 'package:bpexch/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -91,193 +91,199 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => AnimationProvider()..initializeAnimation(this),
-      child: Scaffold(
-        body: Consumer<AnimationProvider>(
-          builder: (context, animationProvider, child) {
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: Image.asset(
-                    'assets/images/appimage.jpg',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Positioned.fill(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                    child: Container(
-                      color: Colors.black.withOpacity(0.2),
+      child: WillPopScope(
+        onWillPop: () async {
+          SystemNavigator.pop();
+          return false;
+        },
+        child: Scaffold(
+          body: Consumer<AnimationProvider>(
+            builder: (context, animationProvider, child) {
+              return Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.asset(
+                      'assets/images/appimage.jpg',
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-                Positioned.fill(
-                  top: 10.h,
-                  left: 10.w,
-                  right: 10.w,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(height: 100.h),
-                        Column(
-                          children: [
-                            AnimatedBuilder(
-                              animation: animationProvider.controller,
-                              builder: (context, child) {
-                                return Container(
-                                  padding: EdgeInsets.all(6.r),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        animationProvider
-                                                .colorAnimation1Value.value ??
-                                            Colors.white,
-                                        animationProvider
-                                                .colorAnimation2Value.value ??
-                                            Colors.white,
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
+                  Positioned.fill(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                      child: Container(
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    top: 10.h,
+                    left: 10.w,
+                    right: 10.w,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(height: 100.h),
+                          Column(
+                            children: [
+                              AnimatedBuilder(
+                                animation: animationProvider.controller,
+                                builder: (context, child) {
+                                  return Container(
+                                    padding: EdgeInsets.all(6.r),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          animationProvider
+                                                  .colorAnimation1Value.value ??
+                                              Colors.white,
+                                          animationProvider
+                                                  .colorAnimation2Value.value ??
+                                              Colors.white,
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
                                     ),
-                                  ),
-                                  child: imageBytes == null
-                                      ? Shimmer.fromColors(
-                                          baseColor: Colors.grey[300]!,
-                                          highlightColor: Colors.grey[100]!,
-                                          child: CircleAvatar(
+                                    child: imageBytes == null
+                                        ? Shimmer.fromColors(
+                                            baseColor: Colors.grey[300]!,
+                                            highlightColor: Colors.grey[100]!,
+                                            child: CircleAvatar(
+                                              radius: 80.r,
+                                              backgroundColor: Colors.grey[
+                                                  300], // Placeholder background color
+                                            ),
+                                          )
+                                        : CircleAvatar(
                                             radius: 80.r,
-                                            backgroundColor: Colors.grey[
-                                                300], // Placeholder background color
+                                            backgroundImage:
+                                                Image.memory(imageBytes!).image,
+                                            backgroundColor: Colors.transparent,
                                           ),
-                                        )
-                                      : CircleAvatar(
-                                          radius: 80.r,
-                                          backgroundImage:
-                                              Image.memory(imageBytes!).image,
-                                          backgroundColor: Colors.transparent,
-                                        ),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 20.h),
-                            Text(
-                              'Welcome To ${widget.companyInfo}',
-                              style: AppTextStyles.appnametext(18),
-                            ),
-                            SizedBox(height: 30.h),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: CustomTextField(
-                                      hintText: 'Username',
-                                      iconPath: 'assets/icons/user.svg',
-                                      controller: usernameController,
-                                    ),
-                                  ),
-                                  SizedBox(height: 20.h),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: CustomTextField(
-                                      hintText: 'Password',
-                                      iconPath: 'assets/icons/lock.svg',
-                                      isPasswordField: true,
-                                      controller: passwordController,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 30.h),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SignupScreen(
-                                        companyInfo: widget.companyInfo),
-                                  ),
-                                );
-                              },
-                              child: RichText(
-                                text: TextSpan(
-                                  text: "Don't have an account? ",
-                                  style: AppTextStyles.whiteText(16),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: "Sign up",
-                                      style: AppTextStyles.greenText(16),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 20.h),
-                            GestureDetector(
-                              onTap:
-                                  _launchWhatsApp, // Launch WhatsApp when tapped
-                              child: RichText(
-                                text: TextSpan(
-                                  text: "Facing a problem? ",
-                                  style: AppTextStyles.whiteText(16),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: "Click here.",
-                                      style: AppTextStyles.greenText(16),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 30.h),
-                        Visibility(
-                          visible: !isLoading,
-                          child: CustomElevatedButton(
-                            text: 'Login',
-                            onPressed: () {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              handleLogin(
-                                context,
-                                usernameController.text.trim(),
-                                passwordController.text.trim(),
-                                _loginService,
-                                usernameController,
-                                passwordController,
-                                (bool loading) {
-                                  setState(() {
-                                    isLoading = loading;
-                                  });
+                                  );
                                 },
-                              );
-                            },
-                            height: 60.h,
-                            width: 250.w,
-                            color: Colors.green,
-                            borderRadius: 20.r,
+                              ),
+                              SizedBox(height: 20.h),
+                              Text(
+                                'Welcome To ${widget.companyInfo}',
+                                style: AppTextStyles.appnametext(18),
+                              ),
+                              SizedBox(height: 30.h),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: CustomTextField(
+                                        hintText: 'Username',
+                                        iconPath: 'assets/icons/user.svg',
+                                        controller: usernameController,
+                                      ),
+                                    ),
+                                    SizedBox(height: 20.h),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: CustomTextField(
+                                        hintText: 'Password',
+                                        iconPath: 'assets/icons/lock.svg',
+                                        isPasswordField: true,
+                                        controller: passwordController,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 30.h),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SignupScreen(
+                                          companyInfo: widget.companyInfo),
+                                    ),
+                                  );
+                                },
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: "Don't have an account? ",
+                                    style: AppTextStyles.whiteText(16),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: "Sign up",
+                                        style: AppTextStyles.greenText(16),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20.h),
+                              GestureDetector(
+                                onTap:
+                                    _launchWhatsApp, // Launch WhatsApp when tapped
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: "Facing a problem? ",
+                                    style: AppTextStyles.whiteText(16),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: "Click here.",
+                                        style: AppTextStyles.greenText(16),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        Visibility(
-                          visible: isLoading,
-                          child: SpinKitFadingCircle(
-                            color: Colors.green,
-                            size: 60.r,
+                          SizedBox(height: 30.h),
+                          Visibility(
+                            visible: !isLoading,
+                            child: CustomElevatedButton(
+                              text: 'Login',
+                              onPressed: () {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                handleLogin(
+                                  context,
+                                  usernameController.text.trim(),
+                                  passwordController.text.trim(),
+                                  _loginService,
+                                  usernameController,
+                                  passwordController,
+                                  (bool loading) {
+                                    setState(() {
+                                      isLoading = loading;
+                                    });
+                                  },
+                                );
+                              },
+                              height: 60.h,
+                              width: 250.w,
+                              color: Colors.green,
+                              borderRadius: 20.r,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 30.r),
-                      ],
+                          Visibility(
+                            visible: isLoading,
+                            child: SpinKitFadingCircle(
+                              color: Colors.green,
+                              size: 60.r,
+                            ),
+                          ),
+                          SizedBox(height: 30.r),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
